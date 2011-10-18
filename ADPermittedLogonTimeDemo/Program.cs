@@ -31,9 +31,11 @@ namespace ADPermittedLogonTimeDemo
                     Console.WriteLine(oldResult[i]);
                     Console.WriteLine(newResult[i]);
                     Console.WriteLine("Results do not match.");
-                    break;
+                    return;
                 }
             }
+
+            Console.WriteLine("Results match.");
         }
     }
 }
