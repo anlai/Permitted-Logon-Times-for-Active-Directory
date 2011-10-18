@@ -49,8 +49,7 @@ namespace ADPermittedLogonTime
         {
             var hours = MarkHours(byteMask);
 
-
-            throw new NotImplementedException();
+            return ConvertToLogonTime(hours, (timeZone.BaseUtcOffset.Hours));
         }
         
         /// <summary>
@@ -252,6 +251,62 @@ namespace ADPermittedLogonTime
                 hours[index] = true;
                 value -= 1;
             }
+        }
+
+        private static List<LogonTime> ConvertToLogonTime(bool[] hours, int offset)
+        {
+            var ltimes = new List<LogonTime>();
+
+            int? begin = null, end = null;
+
+            for (var i = 0; i < hours.Length; i++)
+            {
+                var index = i + (-1)*offset;
+
+                // shifts over begging, loop back to the end
+                if (index < 0)
+                {
+                    index = hours.Length + index;
+                }
+                // shifts over end, start back from beginning of array
+                else if (index >= hours.Length)
+                {
+                    index = index - hours.Length;
+                }
+
+                if (!begin.HasValue && hours[index])
+                {
+                    begin = CalculateHour(index, offset);
+                }
+                else if (begin.HasValue && !hours[index])
+                {
+                    end = CalculateHour(index, offset);
+
+                    // save the day
+                    ltimes.Add(new LogonTime(CalculateDay(index,offset), new DateTime(2011, 1, 1, begin.Value, 0, 0), new DateTime(2011, 1, 1, end.Value, 0,0)));
+
+                    begin = null;
+                    end = null;
+                }
+
+            }
+
+            return ltimes;
+        }
+
+        private static int CalculateHour(int index, int offset)
+        {
+            var hour = index + offset;
+            hour = hour%24;
+
+            return hour;
+        }
+
+        private static DayOfWeek CalculateDay(int index, int offset)
+        {
+            var day = Math.Floor((decimal)(index + offset)/7);
+            
+            return (DayOfWeek) day;
         }
     }
 }
