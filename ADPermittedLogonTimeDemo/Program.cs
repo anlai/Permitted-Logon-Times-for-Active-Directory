@@ -35,7 +35,9 @@ namespace ADPermittedLogonTimeDemo
                 }
             }
 
-            Console.WriteLine("Results match.");
+            Console.WriteLine("Results match for generating AD byte mask.");
+
+            PermittedLogonTimes.GetLogonTimes(newResult);
         }
     }
 }

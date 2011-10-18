@@ -35,7 +35,7 @@ namespace ADPermittedLogonTime
         /// <returns>List of LogonTime objects to signify allows times</returns>
         public static List<LogonTime> GetLogonTimes(byte[] byteMask)
         {
-            var zone = TimeZone.CurrentTimeZone;
+            var zone = TimeZoneInfo.FindSystemTimeZoneById(TimeZone.CurrentTimeZone.StandardName);
             return GetLogonTimes(byteMask, zone);
         }
 
@@ -45,8 +45,11 @@ namespace ADPermittedLogonTime
         /// <param name="byteMask">Active Directory byte mask</param>
         /// <param name="timeZone">Time zone to convert to</param>
         /// <returns>List of LogonTime objects to signify allows times</returns>
-        public static List<LogonTime> GetLogonTimes(byte[] byteMask, TimeZone timeZone)
+        public static List<LogonTime> GetLogonTimes(byte[] byteMask, TimeZoneInfo timeZone)
         {
+            var hours = MarkHours(byteMask);
+
+
             throw new NotImplementedException();
         }
         
@@ -119,9 +122,10 @@ namespace ADPermittedLogonTime
         private static byte[] ConvertToAD(bool[] hours)
         {
             var permittedHours = new byte[21];
-            int index = 0, index2 = 0;
+            var index = 0;  // index through the hours array
+            var index2 = 0; // index through the permitted hours array
 
-            while (index < hours.Count())
+            while (index < hours.Length)
             {
                 var result = ConvertBlockToAD(hours.Skip(index).Take(24).ToArray());
 
@@ -180,6 +184,74 @@ namespace ADPermittedLogonTime
             }
 
             return 0;
+        }
+
+        /// <summary>
+        /// Fills in an hour array based on bytemask
+        /// </summary>
+        /// <param name="byteMask"></param>
+        private static bool[] MarkHours(byte[] byteMask)
+        {
+            var hours = InitializeTimeArray();
+
+            for (var i = 0; i < byteMask.Length; i++ )
+            {
+                ParseBlock(byteMask[i], hours, i * 8);
+            }
+
+            return hours;
+        }
+
+        /// <summary>
+        /// Convert the byte block back into the array
+        /// </summary>
+        /// <param name="block"></param>
+        /// <param name="hours"></param>
+        /// <param name="index"></param>
+        private static void ParseBlock(byte block, bool[] hours, int index)
+        {
+            var value = (int) block;
+
+            if (value >= 128)
+            {
+                hours[index + 7] = true;
+                value -= 128;
+            }
+            if (value >= 64)
+            {
+                hours[index + 6] = true;
+                value -= 64;
+            }
+            if (value >= 32)
+            {
+                hours[index + 5] = true;
+                value -= 32;
+            }
+            if (value >= 16)
+            {
+                hours[index + 4] = true;
+                value -= 16;
+            }
+            if (value >= 8)
+            {
+                hours[index + 3] = true;
+                value -= 8;
+            }
+            if (value >= 4)
+            {
+                hours[index + 2] = true;
+                value -= 4;
+            }
+            if (value >= 2)
+            {
+                hours[index + 1] = true;
+                value -= 2;
+            }
+            if (value >= 1)
+            {
+                hours[index] = true;
+                value -= 1;
+            }
         }
     }
 }
