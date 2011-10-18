@@ -130,7 +130,7 @@ namespace ADPermittedLogonTime
                 permittedHours[index2+2] = result[2];
 
                 index += 24;
-                index += 3;
+                index2 += 3;
             }
             
             return permittedHours;
@@ -147,8 +147,12 @@ namespace ADPermittedLogonTime
 
             for (var i = 0; i < 24; i++)
             {
-                var index = (int) Math.Floor((decimal) (i)/8);
-                set[index] += CalculateLocationValue(i);
+                if (hours[i])
+                {
+                    var index = (int)Math.Floor((decimal)(i) / 8);
+                    set[index] += CalculateLocationValue(i);    
+                }
+                
             }
 
             return new byte[3] { Convert.ToByte(set[0]), Convert.ToByte(set[1]), Convert.ToByte(set[2]) };

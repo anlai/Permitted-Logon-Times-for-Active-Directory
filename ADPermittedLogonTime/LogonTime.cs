@@ -52,7 +52,7 @@ namespace ADPermittedLogonTime
 
         private void SetOffset(TimeZone timeZone)
         {
-            TimeZoneOffSet = timeZone.IsDaylightSavingTime(DateTime.Now) ? timeZone.GetUtcOffset(DateTime.Now).Hours + 1 : timeZone.GetUtcOffset(DateTime.Now).Hours;
+            TimeZoneOffSet = timeZone.IsDaylightSavingTime(DateTime.Now) ? timeZone.GetUtcOffset(DateTime.Now).Hours - 1 : timeZone.GetUtcOffset(DateTime.Now).Hours;
         }
 
         private void ValidateTimes()
