@@ -16,7 +16,7 @@ namespace ADPermittedLogonTime
             BeginTime = beginTime;
             EndTime = endTime;
 
-            SetOffset(TimeZone.CurrentTimeZone);
+            SetOffset(TimeZoneInfo.FindSystemTimeZoneById(TimeZone.CurrentTimeZone.StandardName));
             ValidateTimes();
         }
 
@@ -26,11 +26,11 @@ namespace ADPermittedLogonTime
             BeginTime = new DateTime(begin.Ticks);
             EndTime = new DateTime(end.Ticks);
 
-            SetOffset(TimeZone.CurrentTimeZone);
+            SetOffset(TimeZoneInfo.FindSystemTimeZoneById(TimeZone.CurrentTimeZone.StandardName));
             ValidateTimes();
         }
 
-        public LogonTime(DayOfWeek dayOfWeek, DateTime beginTime, DateTime endTime, TimeZone timeZone)
+        public LogonTime(DayOfWeek dayOfWeek, DateTime beginTime, DateTime endTime, TimeZoneInfo timeZone)
         {
             DayOfWeek = dayOfWeek;
             BeginTime = beginTime;
@@ -40,7 +40,7 @@ namespace ADPermittedLogonTime
             ValidateTimes();
         }
 
-        public LogonTime(DayOfWeek dayOfWeek, TimeSpan begin, TimeSpan end, TimeZone timeZone)
+        public LogonTime(DayOfWeek dayOfWeek, TimeSpan begin, TimeSpan end, TimeZoneInfo timeZone)
         {
             DayOfWeek = dayOfWeek;
             BeginTime = new DateTime(begin.Ticks);
@@ -50,9 +50,10 @@ namespace ADPermittedLogonTime
             ValidateTimes();
         }
 
-        private void SetOffset(TimeZone timeZone)
+        private void SetOffset(TimeZoneInfo timeZone)
         {
-            TimeZoneOffSet = timeZone.IsDaylightSavingTime(DateTime.Now) ? (-1) * (timeZone.GetUtcOffset(DateTime.Now).Hours - 1) : (-1)*(timeZone.GetUtcOffset(DateTime.Now).Hours);
+            TimeZoneOffSet = (-1) * (timeZone.BaseUtcOffset.Hours);
+            //TimeZoneOffSet = timeZone.IsDaylightSavingTime(DateTime.Now) ? (-1) * (timeZone.GetUtcOffset(DateTime.Now).Hours - 1) : (-1)*(timeZone.GetUtcOffset(DateTime.Now).Hours);
         }
 
         private void ValidateTimes()

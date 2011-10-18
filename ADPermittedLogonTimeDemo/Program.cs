@@ -18,7 +18,7 @@ namespace ADPermittedLogonTimeDemo
             var oldResult = PermittedLogonTime.Calculate(oldTest);
 
             var newTest = new List<ADPermittedLogonTime.LogonTime>();
-            var zone = TimeZone.CurrentTimeZone;
+            var zone = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
             newTest.Add(new ADPermittedLogonTime.LogonTime(DayOfWeek.Monday, new DateTime(2011, 1, 1, 8, 0, 0), new DateTime(2011, 1, 1, 10, 0, 0), zone));
             newTest.Add(new ADPermittedLogonTime.LogonTime(DayOfWeek.Wednesday, new DateTime(2011, 1, 1, 13, 0, 0), new DateTime(2011, 1, 1, 16, 0, 0), zone));
 
