@@ -304,7 +304,7 @@ namespace ADPermittedLogonTime
 
         private static DayOfWeek CalculateDay(int index, int offset)
         {
-            var day = Math.Floor((decimal)(index + offset)/7);
+            var day = Math.Floor((decimal)(index + offset)/24);
             
             return (DayOfWeek) day;
         }
